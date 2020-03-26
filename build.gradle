@@ -1,0 +1,143 @@
+plugins {
+    id "com.google.protobuf" version "0.8.12"
+    id "java"
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'jacoco'
+
+
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+def grpcVersion ='1.28.0' // CURRENT_GRPC_VERSION
+def protobufVersion = '3.11.0'
+def protocVersion = protobufVersion
+
+
+repositories {
+    maven { // The google mirror is less flaky than mavenCentral()
+        url "https://maven-central.storage-download.googleapis.com/repos/central/data/" }
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core',version:'2.10.3'
+    compile group: 'com.fasterxml.jackson.datatype', name:'jackson-datatype-jsr310', version: '2.3.0-rc1'
+    compile'org.springframework.boot:spring-boot-starter-web'
+    implementation'org.springframework.boot:spring-boot-starter-test'
+    compileOnly'org.projectlombok:lombok:1.18.12'
+    compile 'com.google.protobuf:protobuf-java:3.10.0'
+    compile 'net.devh:grpc-spring-boot-starter:2.7.0.RELEASE'
+    compile "io.grpc:grpc-netty:${grpcVersion}"
+    compile 'net.devh:grpc-server-spring-boot-starter:2.7.0.RELEASE'
+    compile group:'com.google.api.grpc',name: 'proto-google-common-protos', version:'1.5.0'
+    compile group: 'org.projectlombok', name:'lombok', version: '1.16.20'
+    implementation 'com.google.protobuf:protobuf-gradle-plugin:0.8.11'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    runtimeOnly 'com.h2database:h2'
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation "io.grpc:grpc-services:${grpcVersion}"
+    compileOnly "javax.annotation:javax.annotation-api:1.2"
+
+    // examples/advanced need this for JsonFormat
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+
+    runtimeOnly"io.grpc:grpc-netty-shaded:${grpcVersion}"
+
+    testImplementation"io.grpc:grpc-testing:${grpcVersion}"
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+    testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+    testCompile "org.mockito:mockito-core:2.+"
+    testCompile('org.mockito:mockito-junit-jupiter:2.18.3')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+
+}
+
+test {
+    useJUnitPlatform()
+}
+sourceSets {
+    main {
+        java {
+
+            srcDir 'build/generated/source/proto/main/grpc'
+            srcDir 'build/generated/source/proto/main/java'
+
+        }
+    }
+}
+
+protobuf {
+
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.11.4'
+    }
+
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.25.0'
+        }
+
+    }
+    generateProtoTasks{
+
+        all()*.plugins{
+            grpc{}
+        }
+    }
+
+}
+
+jacoco{
+    toolVersion = '0.8.5'
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+    reports {
+        html {
+            enabled true
+        }
+    }
+
+    test {
+        jacoco {
+            destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        //    excludes = ["**.generated.**","**.proto.**","**.OmsApplication.**","**.grpcClient.**","**.grpcServer.**"]
+
+        }
+    }
+    
+}
+
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+
+                minimum = 70
+            }
+            excludes = [
+                    'com.oms.Order',
+                    'com.oms.OrderId',
+                    'com.oms.OmsServiceGrpc',
+                    'com.oms.OmsApplication',
+                    'com.oms.grpcClient.*',
+                    'com.oms.grpcServer.*'
+            ]
+        }
+    }
+}
+
+

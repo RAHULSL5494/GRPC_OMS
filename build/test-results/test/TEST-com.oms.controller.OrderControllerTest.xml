@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.oms.controller.OrderControllerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2020-03-26T09:12:00" hostname="IN2393255W1" time="0.211">
+  <properties/>
+  <testcase name="testGET" classname="com.oms.controller.OrderControllerTest" time="0.207"/>
+  <testcase name="testPOST" classname="com.oms.controller.OrderControllerTest" time="0.003"/>
+  <system-out><![CDATA[2020-03-26 14:42:00.436  INFO 13640 --- [    Test worker] com.oms.controller.OrderController       : Order GET call processing for orderId : 123
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

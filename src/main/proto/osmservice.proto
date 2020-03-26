@@ -1,0 +1,24 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.oms";
+
+service OmsService {
+
+    rpc createOrder ( Order) returns ( OrderId ) {}
+    rpc getOrder ( OrderId ) returns ( Order ) {}
+
+}
+
+message Order {
+    int32 orderId = 1;
+    string type = 2;
+    string status = 3;
+    int32 quantity = 4;
+    int32 price = 5;
+    string ticker = 6;
+    string direction = 7;
+}
+
+message OrderId{
+    int32 orderId =1;
+}
